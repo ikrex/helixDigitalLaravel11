@@ -47,7 +47,7 @@
                         <a href="https://www.google.com/maps/@<?= $city->cityLat ?>,{{ $city->cityLong }},14z?entry=ttu" target="_blank" title="Megtekintés Térképen"><?= Icons::ICON_TERKEP; ?></a>
 
 
-                        <a href="/{{ MenuLinks::ADATOK_KOMBINALT }}/{{ $city->id }}/<?= date('Y-m-d', time()); ?>" title="Település grafikonja"><i class="fas fa-chart-line"></i></a>
+                        <a href="{{ MenuLinks::ADATOK_KOMBINALT }}/{{ $city->id }}/<?= date('Y-m-d', time()); ?>" title="Település grafikonja"><i class="fas fa-chart-line"></i></a>
                     </td>
                 </tr>
                 @endforeach

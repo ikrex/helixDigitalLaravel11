@@ -8,7 +8,7 @@ use App\Constants\MenuLinks;
 use App\Constants\CityesTable;
 use App\Models\City;
 
-use App\GeoBuisness;
+
 use Classes\OpenWeather;
 
 class CityController extends Controller
@@ -16,17 +16,10 @@ class CityController extends Controller
 
 
 
-    public function getCityCoordinates(Request $request)
-    {
 
-        $cityName = $request->input('cityName');
-
-        $coordinates = (new OpenWeather())->getCityCoordinetes($cityName)->coord;
-
-        return response()->json($coordinates);
-    }
-
-
+    /**
+     * CRUD rész eleje
+     */
 
     public function getCityListToTable()
     {
@@ -35,14 +28,38 @@ class CityController extends Controller
     }
 
 
-    // Város szerkesztése (mentés)
-    public function updateCity(Request $request, $id)
+
+    public function updateCityForm($id)
     {
+        // Összes aktív város lekérése az adatbázisból
         $city = City::findOrFail($id);
-        $cityName = $city->cityName;
-        $city->cityName = $request->input(CityesTable::FIELD_TELEPULESNEV);
-        $city->cityLat = $request->input(CityesTable::FIELD_LAT);
-        $city->cityLong = $request->input(CityesTable::FIELD_LON);
+
+
+        // Városok továbbítása a nézetnek
+        return view('updateCityForm', compact('city'));
+    }
+
+
+
+    // Város szerkesztése (mentés)
+    public function updateCity(Request $request)
+    {
+        // Az új városnév, szélességi és hosszúsági fok
+        $cityId = $request->input('cityId');
+        $newCityName = $request->input('cityName');
+        $newCityLat = $request->input('cityLat');
+        $newCityLong = $request->input('cityLong');
+
+        // Az aktuális várost keresd meg az azonosító alapján az adatbázisban
+        $city = City::findOrFail($cityId);
+
+        // Frissítsd az adatokat a kapott értékekkel
+        $city->cityName = $newCityName;
+        $city->cityLat = $newCityLat;
+        $city->cityLong = $newCityLong;
+
+
+
         if ($city->save())
         {
             return redirect(MenuLinks::TELEPULES_LISTA)->with('success', 'A(z) város '.$cityName = $city->cityName.' adatai sikeresen frissítve!');
@@ -77,6 +94,8 @@ class CityController extends Controller
 
 
 
+
+
     public function deleteCityForm()
     {
         // Összes aktív város lekérése az adatbázisból
@@ -100,6 +119,28 @@ class CityController extends Controller
         }
     }
 
+
+
+    /**
+     * CRUD rész vége
+     */
+
+
+
+
+
+    /**
+     * Kiegészítő részek
+    */
+    public function getCityCoordinates(Request $request)
+    {
+
+        $cityName = $request->input('cityName');
+
+        $coordinates = (new OpenWeather())->getCityCoordinetes($cityName)->coord;
+
+        return response()->json($coordinates);
+    }
 
 
 }

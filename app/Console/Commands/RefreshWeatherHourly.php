@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Scheduling\Schedule;
 
+use App\Classes\Cron;
+
 class RefreshWeatherHourly extends Command
 {
     /**
@@ -23,21 +25,25 @@ class RefreshWeatherHourly extends Command
     protected $description = 'Command description';
 
     /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
      * Execute the console command.
+     *
+     * @return mixed
      */
     public function handle()
     {
-        
+        (new Cron())->collectWeatherInfos();
 
         Log::info('Időzített feladat végrehajtva!');
     }
-
-
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('refresh:weather-hourly')->hourly();
-    }
-
-
 
 }
