@@ -10,55 +10,146 @@
 
 <div class="container mt-4">
 
-    @php
-        print_r($weatherData);
-    @endphp
+    A(z) {{ $cityName }} település tárolt időjárási adatai<br>
+    <div style="width: 800px; height: 400px;">
+        <canvas id="temperatureChart"></canvas>
+    </div>
+
 
     <div style="width: 800px; height: 400px;">
-        <canvas id="lineChart"></canvas>
+        <canvas id="humidityChart"></canvas>
     </div>
+
+
+    <div style="width: 800px; height: 400px;">
+        <canvas id="windSpeedChart"></canvas>
+    </div>
+
 </div>
 
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
-    <script>
-        // Adatok definiálása
-        var hours = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00"];
-        var temperatures = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
-        // Vonaldiagram létrehozása
-        var ctx = document.getElementById('lineChart').getContext('2d');
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: hours,
-                datasets: [{
-                    label: 'Hőmérséklet',
-                    data: temperatures,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Óra'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Hőmérséklet (°C)'
-                        }
+
+<script>
+    // Adatok definiálása
+    var hours = [];
+    var temperatures = [];
+    var humidity = [];
+    var windSpeed = [];
+
+
+    // Adatok feltöltése a weatherData alapján
+    @foreach($weatherData as $data)
+        hours.push("{{ $data->dataStoredTime }}"); // vagy a hozzátartozó idő része
+        temperatures.push({{ $data->tempereture }}); // hőmérséklet
+        humidity.push({{ $data->humidity }}); // páratartalom
+        windSpeed.push({{ $data->windSpeed }}); // Szélsebesség
+    @endforeach
+
+    // Vonaldiagram létrehozása
+    var tempCtx = document.getElementById('temperatureChart').getContext('2d');
+    var lineChart = new Chart(tempCtx, {
+        type: 'line',
+        data: {
+            labels: hours,
+            datasets: [{
+                label: 'Hőmérséklet',
+                data: temperatures,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Időpont'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Hőmérséklet (°C)'
                     }
                 }
             }
-        });
-    </script>
+        }
+    });
+
+
+
+    var humidityCtx = document.getElementById('humidityChart').getContext('2d');
+    var lineChart = new Chart(humidityCtx, {
+        type: 'line',
+        data: {
+            labels: hours,
+            datasets: [{
+                label: 'Páratartalom',
+                data: humidity,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Időpont'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Páratartalom (%)'
+                    }
+                }
+            }
+        }
+    });
+
+
+    var windSpeedCtx = document.getElementById('windSpeedChart').getContext('2d');
+    var lineChart = new Chart(windSpeedCtx, {
+        type: 'line',
+        data: {
+            labels: hours,
+            datasets: [{
+                label: 'Szélsebesség',
+                data: windSpeed,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Időpont'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Szélsebesség (km/h)'
+                    }
+                }
+            }
+        }
+    });
+
+
+</script>
+
+
+
 </body>
 </html>
