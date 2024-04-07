@@ -80,6 +80,12 @@ class CityController extends Controller
             CityesTable::FIELD_LON => 'required|numeric',
         ]);
 
+        // Ellenőrizze, hogy van-e már ilyen nevű város az adatbázisban
+        $existingCity = City::where('cityName', $request->cityName)->first();
+        if ($existingCity) {
+            return redirect()->back()->with('error', 'Ez a város már létezik az adatbázisban!');
+        }
+
         // Új város létrehozása és mentése az adatbázisba
         $city = new City();
         $city->cityName = $request->cityName;
@@ -91,6 +97,7 @@ class CityController extends Controller
         // Visszatérés a városok listájával
         return redirect()->route('getCityListToTable')->with('success', 'Új város sikeresen hozzáadva!');
     }
+
 
 
 

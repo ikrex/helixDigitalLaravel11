@@ -11,6 +11,12 @@
     <div class="container mt-4">
         <h1>Új város hozzáadása</h1>
 
+        @if(session('error'))
+            <div class="alert alert-warning" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <form action="{{ route('addCity') }}" method="post">
             @csrf
             <div class="form-group">
